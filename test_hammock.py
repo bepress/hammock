@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 
 from httpretty import HTTPretty
@@ -13,6 +14,17 @@ class TestCaseWrest(unittest.TestCase):
     BASE_URL = 'http://%s:%s' % (HOST, PORT)
     PATH = '/sample/path/to/resource'
     URL = BASE_URL + PATH
+
+    def test_unicode_handling(self):
+        name = 'ricardobolañossalazar'
+        name = unicode(name.decode('utf-8'))
+        client = Hammock("http://example.org")
+        resp = client.users(name)
+        assert resp._url()
+
+        client = Hammock(u"http://example.org")
+        resp = client.users(name)
+        assert resp._url()
 
     @httprettified
     def test_methods(self):
@@ -82,13 +94,13 @@ class TestCaseWrest(unittest.TestCase):
         HTTPretty.register_uri(HTTPretty.GET, self.URL)
         client.sample.path.to.resource.GET()
         request = HTTPretty.last_request
-        self.assertIn('User-Agent', request.headers)
+        self.assertNotIn('User-Agent', request.headers)
         self.assertIn('Authorization', request.headers)
         self.assertIn('Accept', request.headers)
         self.assertEqual(request.headers.get('Accept'), ACCEPT_HEADER)
         client.sample.path.to.resource.GET()
         request = HTTPretty.last_request
-        self.assertIn('User-Agent', request.headers)
+        self.assertNotIn('User-Agent', request.headers)
         self.assertIn('Authorization', request.headers)
         self.assertIn('Accept', request.headers)
         self.assertEqual(request.headers.get('Accept'), ACCEPT_HEADER)

@@ -63,7 +63,7 @@ class Hammock(object):
         """
         chain = self
         for arg in args:
-            chain = chain._spawn(str(arg))
+            chain = chain._spawn(arg)
         return chain
 
     def _close_session(self):
@@ -84,7 +84,7 @@ class Hammock(object):
             *args -- extra url path components to tail
         """
         path_comps = [mock._name for mock in self._chain(*args)]
-        url = "/".join(reversed(path_comps))
+        url = u"/".join(reversed(path_comps))
         if self._append_slash:
             url = url + "/"
         return url
